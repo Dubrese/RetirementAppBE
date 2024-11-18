@@ -1,11 +1,11 @@
-const Service = require("../services/service");
+const AuditService = require("../services/audit_service");
 
-let Controller = {
+let AuditController = {
     registerAudit: async (req, res) => {
         const { auditType, data } = req.body;
 
         try {
-            const audit = await Service.registerAudit(auditType, data);
+            const audit = await AuditService.registerAudit(auditType, data);
             res.status(201).json({ message: 'Audit registered successfully', audit });
         } catch (error) {
             res.status(500).json({ message: 'Server error', error: error.message });
@@ -13,4 +13,4 @@ let Controller = {
     }
 }
 
-module.exports = Controller;
+module.exports = AuditController;
