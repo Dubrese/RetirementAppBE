@@ -11,6 +11,7 @@ const CalculationService = {
 
     getRetirementCorpus: (
         totalAnnualExpense,
+        oneTimeExpenses = {},
         currentAge,
         retirementAge,
         inflationRate = 6,
@@ -26,7 +27,8 @@ const CalculationService = {
         totalAnnualExpense *= adjustedMargin;
 
         for (let age = retirementAge; age <= lifeExpectancy; age++) {
-            const inflatedExpense = CalculationService.getFutureValue(totalAnnualExpense, age - currentAge, inflationRate);
+            const oneTimeExpense = (oneTimeExpenses[age] || 0);
+            const inflatedExpense = CalculationService.getFutureValue(totalAnnualExpense + oneTimeExpense, age - currentAge, inflationRate);
             const discountedExpense = CalculationService.getValueAdjustedAfterReturns(inflatedExpense, age - retirementAge, effectiveReturnRate);
             totalRetirementCorpus += discountedExpense;
         }
@@ -37,6 +39,7 @@ const CalculationService = {
     trackCorpusValuation: (
         initialCorpus,
         totalAnnualExpense,
+        oneTimeExpenses = {},
         currentAge,
         retirementAge,
         inflationRate = 6,
@@ -52,8 +55,8 @@ const CalculationService = {
         const effectiveReturnRate = postRetirementReturnRate * (1 - longTermCapitalGainsTax / 100);
 
         for (let age = retirementAge; age <= lifeExpectancy; age++) {
-
-            currentCorpus -= adjustedAnnualExpense;
+            const oneTimeExpense = (oneTimeExpenses[age] || 0) * Math.pow(1 + inflationRate / 100, age - currentAge);
+            currentCorpus -= (adjustedAnnualExpense + oneTimeExpense);
             currentCorpus *= 1 + effectiveReturnRate / 100;
 
             adjustedAnnualExpense *= 1 + inflationRate / 100;
