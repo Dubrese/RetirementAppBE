@@ -23,6 +23,17 @@ let CalculationController = {
             res.status(500).json({ message: 'Server error', error: error.message });
         }
     },
+
+    fetchMonthlySIP: async (req, res) => {
+        const { corpusNeeded, currentAge, retirementAge, preRetirementReturnRate = 14, existingCorpus = 0, sipIncreaseRate = 10 } = req.body;
+
+        try {
+            const sip = CalculationService.getMonthlySIP(corpusNeeded, currentAge, retirementAge, preRetirementReturnRate, existingCorpus, sipIncreaseRate);
+            res.status(201).json({ sip });
+        } catch (error) {
+            res.status(500).json({ message: 'Server error', error: error.message });
+        } 
+    }
 }
 
 module.exports = CalculationController;

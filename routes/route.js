@@ -13,4 +13,7 @@ router.route("/corpus")
 router.route("/corpus/forecast")
     .get(CalculationController.fetchCorpusForeCast);
 
+router.route("/sip")
+    .get(CalculationController.fetchMonthlySIP);
+
 module.exports = router;

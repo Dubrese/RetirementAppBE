@@ -69,6 +69,44 @@ const CalculationService = {
         }
 
         return corpusOverYears;
+    },
+
+    getMonthlySIP: (
+        corpusNeeded,
+        currentAge,
+        retirementAge,
+        preRetirementReturnRate = 14,
+        existingCorpus = 0,
+        sipIncreaseRate = 10
+    ) => {
+        const yearsToRetirement = retirementAge - currentAge;
+        const monthsToRetirement = yearsToRetirement * 12;
+        const monthlyPreRetirementReturnRate = preRetirementReturnRate / 1200;
+
+        const existingCorpusAtRetirement = existingCorpus * Math.pow(1 + preRetirementReturnRate/100, yearsToRetirement);
+        corpusNeeded -= existingCorpusAtRetirement;
+
+        if (corpusNeeded <= 0) {
+            return 0;
+        }
+        
+        let sip = 0;
+
+        if (sipIncreaseRate > 0) {
+            preRetirementReturnRate /= 100;
+            sipIncreaseRate /= 100;
+
+            const totalReturnFactor = Math.pow(1+(preRetirementReturnRate/12), 12 * yearsToRetirement);
+            const sipGrowthFactor = Math.pow(1+(sipIncreaseRate/12), 12 * yearsToRetirement);
+            const monthlyReturnRate = preRetirementReturnRate/12;
+            const monthlySipGrowthRate = sipIncreaseRate/12;
+
+            sip = corpusNeeded / ((totalReturnFactor - sipGrowthFactor) / (monthlyReturnRate - monthlySipGrowthRate));
+        } else {
+            sip = corpusNeeded / ((Math.pow(1 + monthlyPreRetirementReturnRate, monthsToRetirement) - 1) / monthlyPreRetirementReturnRate * (1 + monthlyPreRetirementReturnRate));
+        }
+
+        return Number(sip.toFixed(2));
     }
 
 };
