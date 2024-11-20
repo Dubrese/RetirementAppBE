@@ -13,6 +13,9 @@ router.route("/corpus")
 router.route("/corpus/forecast")
     .get(CalculationController.fetchCorpusForeCast);
 
+router.route("/corpus/sip")
+    .get(CalculationController.fetchCorpusMonthlySIP);
+
 router.route("/sip")
     .get(CalculationController.fetchMonthlySIP);
 
